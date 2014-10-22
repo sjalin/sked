@@ -1,0 +1,1 @@
+Addevent skall sätta nexttime i stuff.c så att compareinterrupptet kommer rätt. 
