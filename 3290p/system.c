@@ -15,12 +15,12 @@ void initSystem(void){
 	TIMSK1 = 1 << TOIE0 | 1 << OCIE1A;
 	OCR1A = 0x0001;
 	TCNT1 = 0x00;
-	TCCR1B = 1 << CS12 | 1 << CS10;  
+	TCCR1B = /*1 << CS12 |*/ 1 << CS10;  
 
 	//Ports
 	DDRB = 0xFF;
 	DDRH = 0x00;
-	PORTB = 0xFF;
+	PORTB = 0x00;
 	PORTH = 0x55;
 	set_sleep_mode(SLEEP_MODE_IDLE);
 

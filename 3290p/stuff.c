@@ -1,6 +1,5 @@
 #include <avr/interrupt.h>
 
-
 #include "stuff.h"
 
 uint32 time = 0;
@@ -9,7 +8,7 @@ uint32 timeOfNextWake;
 
 uint32 GetCurrentTime()
 {
-    return (timer1Overflow*65535 + TCNT1)/20;
+    return (timer1Overflow*65535 + TCNT1)/20000;
 }
 
 void TimeTick(){
@@ -29,7 +28,7 @@ void SetNextWake(uint32 time)
 
 ISR(TIMER1_COMPA_vect){
 	//OCR1A = OCR1A << 1;
-	PORTB ^= 0xC;
+	//PORTB ^= 0xC;
 	//Stäng av compare interrupt
 }
 
@@ -41,6 +40,6 @@ ISR(TIMER1_OVF_vect){
 		starta compare interrupt
 	*/
 
-	PORTB ^= 0x3;
+	PORTB ^= 0xFF0;
 	timer1Overflow++;
 }

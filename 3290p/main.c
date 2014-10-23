@@ -13,7 +13,7 @@
 void blinkLed(uint16 arg)
 {
 	//The blink
-	PORTB ^= 0x30;
+	PORTB ^= arg;
 }
 
 ISR(PCINT2_vect)
@@ -24,7 +24,8 @@ ISR(PCINT2_vect)
 void print_first(uint16 nr)
 {	
 	static int x = 0x1;
-	x ^= 0x3;
+	x ^= 0x01;
+	//x ^= 0x3;
 	clcscreen();
 	print_char(x,1);
 }
@@ -42,10 +43,14 @@ int main()
 {
 	initSystem();
 	InitScheduler();
-	AddEvent(&print_first, (uint16) MEDIUM, MSEC(100), CYCLIC, 1);  
-	//AddEvent(&print_second, (uint16) MEDIUM, MSEC(500), CYCLIC, 2);
 	//AddEvent(&print_first, MEDIUM, MSEC(876), CYCLIC, 3);
-
+//	AddEvent(&print_first, (uint16) MEDIUM, MSEC(500), CYCLIC, 1);  
+	//AddEvent(&print_second, (uint16) MEDIUM, MSEC(500), CYCLIC, 2);
+	
+	//AddEvent(&blinkLed, (uint16) MEDIUM, MSEC(250), CYCLIC, 0x01);
+	//AddEvent(&blinkLed, (uint16) MEDIUM, MSEC(500), CYCLIC, 0x02);
+	AddEvent(&blinkLed, (uint16) MEDIUM, MSEC(500), CYCLIC, 0x04);
+	AddEvent(&blinkLed, (uint16) MEDIUM, SEC(30), CYCLIC, 0x08);
 	StartScheduler();
 	
 	return 0; 
