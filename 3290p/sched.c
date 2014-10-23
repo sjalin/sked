@@ -58,6 +58,7 @@ void InitScheduler()
    }
    scheduling_list.first->nextTime = uint32max;
    scheduling_list.last->nextTime = uint32max;
+   scheduling_list.timeOfNextEvent = uint32max;
 }
 
 
@@ -151,7 +152,7 @@ int16 AddEvent( void (*functionPtr) (uint16), prio_t prio, uint32 after, cyclic_
  */
 void ClearData(scheduling_element_t* element)
 {
-   element->ptr;
+   element->ptrFunction = NULL;
    element->intervall = 0;
    element->nextTime = uint32max;
    element->arg = NO_EVENT;

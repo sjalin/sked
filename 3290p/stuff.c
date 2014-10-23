@@ -7,7 +7,8 @@ uint32 timeOfNextWake;
 
 uint32 GetCurrentTime()
 {
-    return (timer1Overflow*65535 + TCNT1)/TICKS_EVERY_MS;
+	time = (timer1Overflow*65535 + TCNT1)/TICKS_EVERY_MS;
+    return time;
 }
 
 void TimeTick(){
