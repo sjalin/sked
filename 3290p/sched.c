@@ -151,7 +151,7 @@ int16 AddEvent( void (*functionPtr) (uint16), prio_t prio, uint32 after, cyclic_
  */
 void ClearData(scheduling_element_t* element)
 {
-   element->ptrFunction = NULL;
+   element->ptr;
    element->intervall = 0;
    element->nextTime = uint32max;
    element->arg = NO_EVENT;
