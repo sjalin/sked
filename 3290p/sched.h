@@ -5,6 +5,9 @@
 
 #define SEC(x)	x*1000
 #define MSEC(x) x 
+#define NOW 0
+
+#define DUMMY 0
 
 #define NUMBER_OF_PRIOS (BACKGROUND +1)
 

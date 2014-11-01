@@ -11,6 +11,6 @@ typedef unsigned short  uint16;
 typedef signed   long   int32;
 typedef unsigned long   uint32;
 
-void initSystem(void);
+void InitSystem(void);
 
 #endif

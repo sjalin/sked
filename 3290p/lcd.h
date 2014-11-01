@@ -1,18 +1,20 @@
-//#include <stdio.h>
-#include <avr/io.h>
+#ifndef LCD_H
+#define LCD_H
 
-void LCD_Init(void);
+#include "stuff.h"
 
-void clcscreen(void);
+void InitLCD(void);
+
+void clearScreen(void);
+
+void clearSegment(uint16 segment);
 
 void print_char(int num, int pos); 
 
-//void print_temp(lcd_t *self, float *temp);
+void printTemp(float temp1);
 
-void debugprint(float temp1);
+void printNumber(uint16 number);
 
-void printTime1(int test);
+void PrintFloat(float number); 
 
-void print_temp2(float temp1);
-
-void lcdshowtempoffset(float temp1);
+#endif

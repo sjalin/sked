@@ -1,14 +1,14 @@
 #include <avr/interrupt.h>
 #include "stuff.h"
 
-uint32 time = 0;
+volatile double time = 0;
 uint32 timer1Overflow = 0; 
 uint32 timeOfNextWake;
 
 uint32 GetCurrentTime()
 {
-	time = (timer1Overflow*65535 + TCNT1)/TICKS_EVERY_MS;
-    return time;
+	time =(timer1Overflow*65535 + TCNT1) / 19.53125;
+    return (uint32) time;
 }
 
 void TimeTick(){
@@ -39,6 +39,6 @@ ISR(TIMER1_OVF_vect){
 		set OCR1A
 		starta compare interrupt
 	*/
-	PORTB ^= 0xFF0;
+	PORTB ^= 0xF0;
 	timer1Overflow++;
 }

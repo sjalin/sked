@@ -250,6 +250,7 @@ void ExecuteSchedulerRun()
 		}else{
 			ClearFirst(&scheduling_list.first,&scheduling_list.last);
 		}
+		scheduling_list.timeOfNextEvent = scheduling_list.first->nextTime;
 	}
 	else{
 		//Should not come here, maybe some error handling in case of.

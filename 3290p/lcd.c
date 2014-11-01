@@ -1,10 +1,12 @@
 /*Includes*/
-#include "lcd.h"
+#include <avr/io.h>
 #include <math.h>
+
+#include "lcd.h"
 
 /*
 Define the diffrent segments
-	  a
+      a
     -----
    |     |
   f|  g  |b
@@ -23,7 +25,10 @@ bp is the dot or the doubble dot.
 #define e 0x4
 #define f 0x2
 #define g 0x1
-#define bp 0x80
+#define bp 0x80 //Double dot on between segment 2 and 3 controlled by LCDDR04
+
+#define MINUS 11
+#define POINT 12
 
 const char char_gen[] = {
  a+b+c+d+e+f,   // Displays "0"
@@ -45,7 +50,7 @@ const char char_gen[] = {
 
 int buttonActive = 0; 
 
-void LCD_Init(void)
+void InitLCD(void)
 {
 	/* Use 32 kHz crystal oscillator */
 	/* Static Bias and Static duty, SEG21:SEG24 is used as port pins */
@@ -69,13 +74,35 @@ void LCD_Init(void)
 	LCDCRA = (1<<LCDEN) | (1<<LCDBD) | (1<<LCDAB);
 }
 
-void clcscreen(void)
+void clearScreen(void)
 {
-	LCDDR00 = 0;
-	LCDDR01 = 0;
-	LCDDR02 = 0;
-	LCDDR03 = 0;
-	LCDDR04 = 0;
+	clearSegment(0);	
+	clearSegment(1);	
+	clearSegment(2);	
+	clearSegment(3);	
+	clearSegment(4);	
+}
+
+void clearSegment(uint16 segment){
+	switch (segment){
+		case 0: 
+			LCDDR00 = 0;
+			break; 
+		case 1: 
+			LCDDR01 = 0;
+			break; 
+		case 2: 
+			LCDDR02 = 0;
+			break; 
+		case 3: 
+			LCDDR03 = 0;
+			break; 
+		case 4: 
+			LCDDR04 = 0;
+			break; 
+		default:
+			break; 
+	}	
 }
 
 
@@ -83,17 +110,17 @@ void clcscreen(void)
 void print_char(int num, int pos)
 {	
 	if(pos >= 0 && pos <= 4){
-			if (pos == 0){
-				LCDDR00 = LCDDR00 + char_gen[num];
-			}else if (pos == 1){
-				LCDDR01 =  LCDDR01 + char_gen[num];
-			}else if (pos == 2){
-				LCDDR02 = LCDDR02 + char_gen[num];
-			}else if (pos == 3){
-				LCDDR03 = LCDDR03 + char_gen[num];
-			}else if (pos == 4){
-				LCDDR04 = LCDDR04 + char_gen[num];
-			}
+		if (pos == 0){
+			LCDDR00 = char_gen[num];
+		}else if (pos == 1){
+			LCDDR01 = char_gen[num];
+		}else if (pos == 2){
+			LCDDR02 = char_gen[num];
+		}else if (pos == 3){
+			LCDDR03 = char_gen[num];
+		}else if (pos == 4){
+			LCDDR04 = char_gen[num];
+		}
 	}else{
 		LCDDR00 = a+f+e+g+d;
 		LCDDR01 = char_gen[0];
@@ -101,7 +128,39 @@ void print_char(int num, int pos)
 	}
 }
 
-void print_temp2(float temp1)
+PrintFloat(float number)
+{
+	uint16 nr; 
+	//LCDDR00 = bp;
+	//LCDDR01 = bp;
+	//LCDDR02 = bp;
+	//LCDDR03 = bp;
+	//LCDDR04 = bp; 
+	
+	if (number < 0){
+		LCDDR00 = char_gen[MINUS];
+		number = number*(-1); 
+	}else{
+		LCDDR00 = 0; 
+	}
+
+
+	number *= 100;
+	
+	LCDDR04 = char_gen[((uint16) number)%10];
+	LCDDR03 = char_gen[(((uint16) number)/10)%10];
+	LCDDR02 = char_gen[(((uint16) number)/100)%10] +  char_gen[POINT];
+	if ((((uint16) number)/1000)%10){
+		LCDDR01 = char_gen[(((uint16) number)/1000)%10];
+	}else{
+		LCDDR01 = 0; 
+	}
+}
+
+
+
+
+void printTemp(float temp1)
 {
 	int Error = 0;
 	float temp = temp1;// *temp1;
@@ -110,7 +169,7 @@ void print_temp2(float temp1)
 	int seconddigit = 0;
 	int fract = 0;
 
-	clcscreen(); // Clears the screen
+	clearScreen(); // Clears the screen
 
 	if ((-99.9 <= temp) && (temp <= 99.9)){
 		if (temp<0){		// checks if temp is a negativ number
@@ -166,231 +225,13 @@ void print_temp2(float temp1)
 	}
 }
 
-void lcdshowtempoffset(float temp1)
+
+void printNumber(uint16 number)
 {
-	int Error = 0;
-	float temp = temp1;// *temp1;
-	int temp2;
-	int firstdigit = 0;
-	int seconddigit = 0;
-	int fract = 0;
-
-	clcscreen(); // Clears the screen
-	if ((-99.9 <= temp) && (temp <= 99.9)) 
-	{
-		if (temp<0)		// checks if temp is a negativ number
-		{
-			LCDDR00 = char_gen[11];
-			temp = temp * (-1);
-		}
-
-		temp = temp * 10;
-		temp = round(temp);
-		temp2 = (int)temp;
-	
-
-		int inc = 0;
-		while(temp2!=0)
-		{
-
-			if(inc == 0)
-			{
-				fract = temp2%10;
-			
-			}
-			else if(inc == 1)
-			{
-				seconddigit = (temp2%10);
-
-			}
-
-			else if(inc == 2)
-			{
-				firstdigit = (temp2%10);
-			}
-
-			inc++;
-			temp2 = temp2/10;
-
-		}
-	
-
-
-		if(firstdigit == 0)
-		{
-
-			if(seconddigit < 13 && fract < 13)
-			{
-				LCDDR01 = char_gen[seconddigit] + char_gen[12];
-				LCDDR02 = char_gen[fract];
-				LCDDR03 = char_gen[10];
-			}
-			else
-			{
-				Error = 1;
-			}
-		}
-		else if(firstdigit != 0)
-		{
-
-			if(firstdigit < 13 && seconddigit < 13 && fract < 13)
-			{
-
-				LCDDR01 = char_gen[firstdigit];
-				LCDDR02 = char_gen[seconddigit]+char_gen[12];
-				LCDDR03 = char_gen[fract];
-				LCDDR04 = char_gen[10];
-			}
-			else
-			{
-				Error = 1;
-			}
-		} 
-
-	}
-	else
-	{
-		Error = 1;
-	}
-
-	if(Error)
-	{
-		LCDDR00 = char_gen[13];
-		LCDDR01 = char_gen[14];
-		LCDDR02 = char_gen[14];
-		LCDDR03 = char_gen[0];
-		LCDDR04 = char_gen[14];
-	}
-
-}
-
-
-void debugprint(float temp1)
-{
-	clcscreen();
-	int Error = 0;
-	int firstD = 0;
-	int secondD = 0;
-	int thirdD = 0;
-	int fourthD= 0;
-	int inc = 0;
-	int temp;
-
-	temp1 = temp1 * 10;
-
-	temp = (int)temp1;
-
-	if(temp < 9999 && temp > - 9999)
-	{
-		if (temp<0)		// checks if temp is a negativ number
-		{
-			LCDDR00 = char_gen[11];
-			temp = temp * (-1);
-		}
-
-		if (temp == 0)
-		{
-			LCDDR01 = char_gen[13];
-			LCDDR02 = char_gen[0];
-			LCDDR03 = char_gen[0];
-			LCDDR04 = char_gen[0];
-		}
-
-
-
-		while(temp!=0)
-		{
-			if(inc == 0)
-			{
-				fourthD = (temp % 10);
-			}
-
-			else if(inc == 1)
-			{
-				thirdD = (temp % 10);
-			}
-			else if(inc == 2)
-			{
-				secondD = (temp % 10);
-			}
-			else if(inc == 3)
-			{
-				firstD = (temp % 10);
-			}
-
-			inc++;
-			temp = temp / 10;
-
-		}
-	
-
-		LCDDR01 = char_gen[firstD];
-		LCDDR02 = char_gen[secondD];
-		LCDDR03 = char_gen[thirdD];
-		LCDDR04 = char_gen[fourthD];
-	
-	}
-	
-	else
-	{
-		Error = 1;
-	}	
-
-
-	if(Error)
-	{
-		clcscreen();
-		LCDDR01 = char_gen[0];
-		LCDDR02 = char_gen[0];
-		LCDDR03 = char_gen[13];
-		LCDDR04 = char_gen[13];
-	}
-
-}
-
-	
-void printTime1(int test)
-{
-	int inc = 0;
-	int firstD = 0;
-	int secondD = 0;
-	int thirdD = 0;
-	int fourthD = 0;
-	int fifthD = 0;
-
-
-	int temp = test;	
-
-		while(temp!=0)
-		{
-			if(inc == 0)
-			{
-				fifthD = (temp % 10);
-			}
-
-			else if(inc == 1)
-			{
-				fourthD = (temp % 10);
-			}
-			else if(inc == 2)
-			{
-				thirdD = (temp % 10);
-			}
-			else if(inc == 3)
-			{
-				secondD = (temp % 10);
-			}
-			else if(inc == 3)
-			{
-				firstD = (temp % 10);
-			}
-			inc++;
-			temp = temp / 10;
-		}
-	
-		LCDDR00 = char_gen[firstD];
-		LCDDR01 = char_gen[secondD];
-		LCDDR02 = char_gen[thirdD];
-		LCDDR03 = char_gen[fourthD];
-		LCDDR04 = char_gen[fifthD];
+	clearScreen();
+	print_char(number%10,4);
+	print_char((number/10)%10,3);
+	print_char((number/100)%10,2);
+	print_char((number/1000)%10,1);
+	print_char((number/10000)%10,0);
 }
