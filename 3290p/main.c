@@ -17,9 +17,7 @@ void PrintTemp(uint16 dummy)
 	
 	number += 10.41;
 	number *= -1;*/ 
-
 	PrintFloat(GetTemp()); 
-
 }
 
 int main()
@@ -35,8 +33,8 @@ int main()
 
 	
 	//AddEvent(&print_second, (uint16) MEDIUM, SEC(1), CYCLIC, DUMMY);
-	AddEvent(&BlinkLed, (uint16) MEDIUM, MSEC(500), CYCLIC, 0x1);
-	AddEvent(&BlinkLed, (uint16) MEDIUM, SEC(5), CYCLIC, 0x2);
+//	AddEvent(&BlinkLed, (uint16) MEDIUM, MSEC(500), CYCLIC, 0x1);
+//	AddEvent(&BlinkLed, (uint16) MEDIUM, SEC(5), CYCLIC, 0x2);
 	
 	StartScheduler();
 	
