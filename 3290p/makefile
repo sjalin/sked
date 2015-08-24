@@ -14,7 +14,7 @@ LFUSES= 0x62
 EFUSES= 0x00
 
 
-SOURCES=main.c stuff.c sched.c system.c lcd.c temp.c
+SOURCES=main.c stuff.c sched.c system.c lcd.c debug.c temp.c
 OBJECTS=$(SOURCES:.c=.o)
 
 ELFFILE=elf

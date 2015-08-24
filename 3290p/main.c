@@ -13,13 +13,13 @@
 
 void PrintTemp(uint16 dummy)
 {
-	/*static float number = -13.98;
+	static float number = -13.98;
 	
 	number += 10.41;
-	number *= -1;*/ 
-
-	PrintFloat(GetTemp()); 
-
+	number *= -1; 
+	PrintFloat(number);
+	
+//	PrintFloat(GetTemp()); 
 }
 
 int main()
@@ -30,13 +30,13 @@ int main()
 	InitScheduler();
 	InitDebug();
 	
-	AddEvent(&UpdateTemp, (uint16) MEDIUM, SEC(1), CYCLIC, DUMMY);
-	AddEvent(&PrintTemp, (uint16) MEDIUM, MSEC(500), CYCLIC, DUMMY); 
+//	AddEvent(&UpdateTemp, (uint16) MEDIUM, SEC(1), CYCLIC, DUMMY);
+//	AddEvent(&PrintTemp, (uint16) MEDIUM, MSEC(500), CYCLIC, DUMMY); 
 
 	
 	//AddEvent(&print_second, (uint16) MEDIUM, SEC(1), CYCLIC, DUMMY);
-	AddEvent(&BlinkLed, (uint16) MEDIUM, MSEC(500), CYCLIC, 0x1);
-	AddEvent(&BlinkLed, (uint16) MEDIUM, SEC(5), CYCLIC, 0x2);
+//	AddEvent(&BlinkLed, (uint16) MEDIUM, MSEC(500), CYCLIC, 0x1);
+	AddEvent(&BlinkLed, (uint16) MEDIUM, MSEC(1), CYCLIC, 0x2);
 	
 	StartScheduler();
 	

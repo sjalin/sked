@@ -1,6 +1,7 @@
 #include <avr/interrupt.h>
 #include <avr/io.h>
 #include <math.h>
+#include "debug.h"
 #include "lcd.h"
 #include "sched.h"
 #include "stuff.h"
@@ -63,8 +64,8 @@ void InitTemp()
 	PCMSK0 = 1 << PCINT6;//  | 1 << PCINT5;	
 
 	//Timer 2 (8bit)
-	TCCR2A =  1 << CS20; //| 1 << CS01;
-	TIMSK2 = 1 << TOIE2;
+//	TCCR2A =  1 << CS20; //| 1 << CS01;
+//	TIMSK2 = 1 << TOIE2;
 
 
 	TempPowerOn();
@@ -111,12 +112,38 @@ void StartTempMeasurement(uint16 dummy){
 
 void UpdateTemp(uint16 dummy)
 {
+	/*
 	if (0 == measuringTemp){
 		measuringTemp = 1; 	
 		//TempPowerOn();
 		AddEvent(&StartTempMeasurement, LOW, MSEC(50), ONCE, DUMMY);
 		//Set start of measurement in 50ms
 	}
+	*/
+	float DC;
+	uint32 first = 0; 
+	uint32 second = 0; 
+	
+	BlinkLed(0x01); 
+	while (PINE & 0x40){
+		BlinkLed(0x10); 
+	}
+	BlinkLed(0x02); 
+	while (PINE & 0x40 == 0){
+		first++;
+	}
+	BlinkLed(0x03); 
+	while (PINE & 0x40) {
+		second++;
+	}
+	BlinkLed(0x04); 
+	second += first; 
+	
+	DC = ((float)first)/((float)second);
+	temp = (DC - 0.32)/0.0047;
+	
+
+
 }
 
 

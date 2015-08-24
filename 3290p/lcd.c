@@ -128,9 +128,9 @@ void print_char(int num, int pos)
 	}
 }
 
-PrintFloat(float number)
+void PrintFloat(float number)
 {
-	uint16 nr; 
+	//uint16 nr; 
 	//LCDDR00 = bp;
 	//LCDDR01 = bp;
 	//LCDDR02 = bp;

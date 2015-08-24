@@ -39,6 +39,6 @@ ISR(TIMER1_OVF_vect){
 		set OCR1A
 		starta compare interrupt
 	*/
-	PORTB ^= 0xF0;
+	PORTB ^= 0x80;
 	timer1Overflow++;
 }
